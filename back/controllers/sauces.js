@@ -5,14 +5,12 @@ exports.getAllSauces = (req, res, next) => {
     Sauce.find()
     .then(sauces => res.status(200).json(sauces))
     .catch(error => res.status(400).json({ error }));
-    next();
 };
 
 exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({ _id: req.params.id })
     .then(sauce => res.status(200).json(sauce))
     .catch(error => res.status(404).json({ error }));
-    next();
 };
 
 exports.createSauce = (req, res, next) => {
@@ -28,7 +26,6 @@ exports.createSauce = (req, res, next) => {
     sauce.save()
     .then(() => res.status(201).json({ message: "Sauce saved."}))
     .catch(error => res.status(400).json({ error }));
-    next();
 };
 
 exports.modifySauce = (req, res, next) => {
@@ -40,7 +37,6 @@ exports.modifySauce = (req, res, next) => {
     Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
     .then(() => res.status(200).json({ message: "Sauce modified."}))
     .catch(error => res.status(400).json({ error }));
-    next();
 };
 
 exports.deleteSauce = (req, res, next) => {
@@ -54,9 +50,22 @@ exports.deleteSauce = (req, res, next) => {
         });
     })
     .catch(error => res.status(500).json({ error }));
-    next();
 };
 
-/*exports.likeSauce = (req, res, next) => {
-
-};*/
+exports.likeSauce = (req, res, next) => {
+    Sauce.findOne({ _id: req.params.id })
+    .then(like => {
+        const likes = JSON.parse(req.body.likes);
+        const usersLiked = JSON.parse(req.body.userLiked);
+        
+        //if (/*userId est pas dans body.userLiked */)
+    })
+/*Logique: 
+-si le userId est dans le [] usersLiked il ne peut pas like donc ça retire le like
+-pareil avec le [] usersDisliked
+-si le userId n'est pas dans les [] alors ça ajoute +1 soit au like soit au dislike et ça push le userId dans le [] en question
+-donc faut vérifier dans le body si l'id est dans un []
+-s'il n'y est pas on push donc modifie le body
+-s'il y est on le retire du [] en question et -1 au like ou dislike.
+*/       
+};
