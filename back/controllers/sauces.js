@@ -20,8 +20,8 @@ exports.createSauce = (req, res, next) => {
         imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`,
         likes: 0,
         dislikes: 0,
-        userLiked: 0,
-        userDisliked: 0
+        userLiked: [],
+        userDisliked: []
     });
     sauce.save()
     .then(() => res.status(201).json({ message: "Sauce saved."}))
@@ -53,13 +53,19 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
-    Sauce.findOne({ _id: req.params.id })
-    .then(like => {
-        const likes = JSON.parse(req.body.likes);
-        const usersLiked = JSON.parse(req.body.userLiked);
-        
-        //if (/*userId est pas dans body.userLiked */)
+   Sauce.findOne({ _id: req.params.id })
+    .then(object => {
+        console.log(object);
+        const likes = object.likes;
+        const usersLiked = object.usersLiked;
+        const dislikes = object.dislikes;
+        const usersDisliked = object.usersDisliked;
+       // likes.value = usersLiked.length;
+
     })
+    .then(() => res.status(200).json({ message: "la route fonctionne."}))
+    .catch(error => res.status(400).json({ error }));
+
 /*Logique: 
 -si le userId est dans le [] usersLiked il ne peut pas like donc ça retire le like
 -pareil avec le [] usersDisliked
@@ -67,5 +73,6 @@ exports.likeSauce = (req, res, next) => {
 -donc faut vérifier dans le body si l'id est dans un []
 -s'il n'y est pas on push donc modifie le body
 -s'il y est on le retire du [] en question et -1 au like ou dislike.
+-NB: voir filter en js
 */       
 };
