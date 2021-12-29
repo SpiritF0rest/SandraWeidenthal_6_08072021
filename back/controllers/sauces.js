@@ -53,17 +53,75 @@ exports.deleteSauce = (req, res, next) => {
 };
 
 exports.likeSauce = (req, res, next) => {
-   Sauce.findOne({ _id: req.params.id })
-    .then(object => {
-        console.log(object);
-        const likes = object.likes;
-        const usersLiked = object.usersLiked;
-        const dislikes = object.dislikes;
-        const usersDisliked = object.usersDisliked;
-       // likes.value = usersLiked.length;
+    const like = JSON.parse(req.body.like);
+    Sauce.findOne({ _id: req.params.id })
+    .then(sauce => {
+        console.log(sauce);
+        let likes = sauce.likes;
+        let usersLiked = sauce.usersLiked;
+        let dislikes = sauce.dislikes;
+        let usersDisliked = sauce.usersDisliked;
+        const usersLikedFilter = usersLiked.filter(user => user == req.body.userId);
+        const usersDislikedFilter = usersDisliked.filter(user => user == req.body.userId);
 
+        if (like === 1) {
+            //code de mis à jour de la sauce pour les likes +1 et userLiked +userId
+            likes++;
+            usersLiked.push(req.body.userId);
+            let updates = {
+                likes : likes,
+                usersLiked: usersLiked,
+                _id: req.params.id,
+            }
+            Sauce.updateOne({ _id: req.params.id }, updates)
+            .then(() => res.status(200).json({ message: "Like counted."}))
+            .catch(error => res.status(400).json({ error }));
+
+        } else if (like === -1) {
+            //code de mis à jour de la sauce pour les dislikes +1 et userDisliked +userId
+            dislikes++;
+            usersDisliked.push(req.body.userId);
+            let updates = {
+                dislikes : dislikes,
+                usersDisliked: usersDisliked,
+                _id: req.params.id,
+            }
+            Sauce.updateOne({ _id: req.params.id }, updates)
+            .then(() => res.status(200).json({ message: "Dislike counted."}))
+            .catch(error => res.status(400).json({ error }));
+
+        } else if (like === 0) {
+            //on cherche l'id de l'user dans les tableaux pour le retirer et on retire 1 du total like ou dislike
+            if (usersLikedFilter != "" ) {
+                //on retire l'userId du tab usersLiked et on likes -1
+                let positionLike = usersLiked.indexOf(req.body.userId);
+                let newUsersLiked = usersLiked.splice(positionLike, 1);                
+                likes--;
+                let updates = {
+                    likes : likes,
+                    usersLiked: usersLiked,
+                    _id: req.params.id,
+                }
+                Sauce.updateOne({ _id: req.params.id }, updates)
+            .then(() => res.status(200).json({ message: "Like discounted."}))
+            .catch(error => res.status(400).json({ error }));
+
+            }else if (usersDislikedFilter != "") {
+                 //on retire l'userId du tab usersDisliked et on dilikes -1
+                 let positionDislike = usersDisliked.indexOf(req.body.userId);
+                 let newUsersDisliked = usersDisliked.splice(positionDislike, 1);
+                 dislikes--;
+                 let updates = {
+                    dislikes : dislikes,
+                    usersDisliked: usersDisliked,
+                    _id: req.params.id,
+                }
+                 Sauce.updateOne({ _id: req.params.id }, updates)
+            .then(() => res.status(200).json({ message: "Like discounted."}))
+            .catch(error => res.status(400).json({ error }));
+            }
+        }
     })
-    .then(() => res.status(200).json({ message: "la route fonctionne."}))
     .catch(error => res.status(400).json({ error }));
 
 /*Logique: 
