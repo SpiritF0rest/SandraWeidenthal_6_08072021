@@ -82,7 +82,7 @@ exports.likeSauce = (req, res, next) => {
             const usersDislikedFilter = usersDisliked.filter(user => user == req.body.userId);
 
             if (like === 1) {
-                //code de mis à jour de la sauce pour les likes +1 et userLiked +userId
+                //if user likes the sauce
                 likes++;
                 usersLiked.push(req.body.userId);
                 let updates = {
@@ -95,7 +95,7 @@ exports.likeSauce = (req, res, next) => {
                     .catch(error => res.status(400).json({ error }));
 
             } else if (like === -1) {
-                //code de mis à jour de la sauce pour les dislikes +1 et userDisliked +userId
+                //if user dislikes the sauce
                 dislikes++;
                 usersDisliked.push(req.body.userId);
                 let updates = {
@@ -108,9 +108,9 @@ exports.likeSauce = (req, res, next) => {
                     .catch(error => res.status(400).json({ error }));
 
             } else if (like === 0) {
-                //on cherche l'id de l'user dans les tableaux pour le retirer et on retire 1 du total like ou dislike
+                //if user withdraws his like or dislike
                 if (usersLikedFilter != "") {
-                    //on retire l'userId du tab usersLiked et on likes -1
+                    //if user withdraws his like 
                     let positionLike = usersLiked.indexOf(req.body.userId);
                     let newUsersLiked = usersLiked.splice(positionLike, 1);
                     likes--;
@@ -124,7 +124,7 @@ exports.likeSauce = (req, res, next) => {
                         .catch(error => res.status(400).json({ error }));
 
                 } else if (usersDislikedFilter != "") {
-                    //on retire l'userId du tab usersDisliked et on dislikes -1
+                    //if user withdraws his dislike
                     let positionDislike = usersDisliked.indexOf(req.body.userId);
                     let newUsersDisliked = usersDisliked.splice(positionDislike, 1);
                     dislikes--;
