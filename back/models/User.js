@@ -6,6 +6,7 @@ const userSchema = mongoose.Schema({
     password: { type: String, required: true }
 });
 
+//Enables improvement of error messages when saving unique data.
 userSchema.plugin(uniqueValidator);
 
 module.exports = mongoose.model("User", userSchema);
